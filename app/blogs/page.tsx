@@ -1,14 +1,41 @@
+import Link from "next/link"
+import Form from "next/form"
 import { getBlogs } from "../services/blogs"
 
-const Blogs = () => {
+const Blogs = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>
+}) => {
+  const { filter } = await searchParams
+  const term = filter?.trim().toLowerCase() ?? ""
+
   const blogs = getBlogs()
+    .filter((blog) => blog.title.toLowerCase().includes(term))
+    .toSorted((a, b) => b.likes - a.likes)
+
   return (
     <div>
       <h2>Blogs</h2>
+
+      <Form action="/blogs">
+        <input
+          key={filter ?? ""}
+          type="text"
+          name="filter"
+          defaultValue={filter ?? ""}
+          placeholder="search by title"
+        />
+        <button type="submit">search</button>
+        {term && <Link href="/blogs">clear</Link>}
+      </Form>
+
+      {term && blogs.length === 0 && <p>no blogs match &quot;{filter}&quot;</p>}
+
       <ul>
-        {blogs.map(blog => (
+        {blogs.map((blog) => (
           <li key={blog.id}>
-            <a href={blog.url}>{blog.title}</a> by {blog.author}, {blog.likes} likes
+            <Link href={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}, {blog.likes} likes
           </li>
         ))}
       </ul>
