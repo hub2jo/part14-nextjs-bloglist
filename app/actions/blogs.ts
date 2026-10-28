@@ -17,7 +17,7 @@ export const createBlog = async (formData: FormData) => {
     throw new Error("title, author and url are required")
   }
 
-  addBlog(title.trim(), author.trim(), url.trim())
+  await addBlog(title.trim(), author.trim(), url.trim())
 
   revalidatePath("/blogs")
   redirect("/blogs")
@@ -30,7 +30,7 @@ export const likeBlog = async (formData: FormData) => {
     throw new Error("invalid blog id")
   }
 
-  incrementLikes(id)
+  await incrementLikes(id)
 
   revalidatePath(`/blogs/${id}`)
   revalidatePath('/blogs')
