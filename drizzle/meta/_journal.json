@@ -8,6 +8,20 @@
       "when": 1793161077595,
       "tag": "0000_spooky_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793241284066,
+      "tag": "0001_naive_nomad",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793241430735,
+      "tag": "0002_motionless_rocket_raccoon",
+      "breakpoints": true
     }
   ]
 }

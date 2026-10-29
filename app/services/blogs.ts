@@ -16,7 +16,16 @@ export const getBlogById = async (id: number) => {
 }
 
 export const addBlog = async (title: string, author: string, url: string) => {
-  await db.insert(blogs).values({ title, author, url })
+  // temporary: no login yet, so assign a random user
+  const user = await db.query.users.findFirst({
+    orderBy: sql`RANDOM()`,
+  })
+
+  if (!user) {
+    throw new Error("cannot create a blog: no users exist")
+  }
+
+  await db.insert(blogs).values({ title, author, url, userId: user.id })
 }
 
 export const incrementLikes = async (id: number) => {
