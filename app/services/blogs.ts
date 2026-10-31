@@ -1,6 +1,7 @@
 import { desc, asc, eq, ilike, sql } from "drizzle-orm"
 import { db } from "../../db"
 import { blogs } from "../../db/schema"
+import { getCurrentUser } from "./session"
 
 export const getBlogs = async (titleFilter: string) => {
   return db.query.blogs.findMany({
@@ -16,13 +17,9 @@ export const getBlogById = async (id: number) => {
 }
 
 export const addBlog = async (title: string, author: string, url: string) => {
-  // temporary: no login yet, so assign a random user
-  const user = await db.query.users.findFirst({
-    orderBy: sql`RANDOM()`,
-  })
-
+  const user = await getCurrentUser()
   if (!user) {
-    throw new Error("cannot create a blog: no users exist")
+    throw new Error("Not logged in")
   }
 
   await db.insert(blogs).values({ title, author, url, userId: user.id })
