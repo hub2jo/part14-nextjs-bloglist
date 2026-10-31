@@ -5,25 +5,40 @@ import { revalidatePath } from "next/cache"
 import { addBlog, incrementLikes } from "../services/blogs"
 import { auth } from "@/auth"
 
-export const createBlog = async (formData: FormData) => {
-  
+type BlogFormState = {
+  errors: { title?: string; author?: string; url?: string }
+  values: { title: string; author: string; url: string }
+}
+
+export const createBlog = async (
+  prevState: BlogFormState,
+  formData: FormData,
+): Promise<BlogFormState> => {
   const session = await auth()
   if (!session) {
     redirect("/login")
   }
-  const title = formData.get("title")
-  const author = formData.get("author")
-  const url = formData.get("url")
 
-  if (
-    typeof title !== "string" || title.trim() === "" ||
-    typeof author !== "string" || author.trim() === "" ||
-    typeof url !== "string" || url.trim() === ""
-  ) {
-    throw new Error("title, author and url are required")
+  const values = {
+    title: String(formData.get("title") ?? "").trim(),
+    author: String(formData.get("author") ?? "").trim(),
+    url: String(formData.get("url") ?? "").trim(),
   }
 
-  await addBlog(title.trim(), author.trim(), url.trim())
+  const errors: BlogFormState["errors"] = {}
+  for (const field of ["title", "author", "url"] as const) {
+    if (!values[field]) {
+      errors[field] = `${field} is required`
+    } else if (values[field].length < 5) {
+      errors[field] = `${field} must be at least 5 characters long`
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors, values }
+  }
+
+  await addBlog(values.title, values.author, values.url)
 
   revalidatePath("/blogs")
   redirect("/blogs")

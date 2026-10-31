@@ -6,32 +6,55 @@ import bcrypt from "bcryptjs"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 
-export const registerUser = async (formData: FormData) => {
-  const username = formData.get("username")
-  const name = formData.get("name")
-  const password = formData.get("password")
+type RegisterFormState = {
+  errors: {
+    username?: string
+    name?: string
+    password?: string
+    passwordConfirm?: string
+  }
+  values: { username: string; name: string }
+}
 
-  if (
-    typeof username !== "string" || username.trim() === "" ||
-    typeof name !== "string" || name.trim() === "" ||
-    typeof password !== "string" || password.length < 3
-  ) {
-    redirect("/register?error=invalid")
+export const registerUser = async (
+  prevState: RegisterFormState,
+  formData: FormData,
+): Promise<RegisterFormState> => {
+  const username = String(formData.get("username") ?? "").trim()
+  const name = String(formData.get("name") ?? "").trim()
+  const password = String(formData.get("password") ?? "")
+  const passwordConfirm = String(formData.get("passwordConfirm") ?? "")
+
+  const errors: RegisterFormState["errors"] = {}
+
+  if (username.length < 4) {
+    errors.username = "username must be at least 4 characters long"
+  }
+  if (!name) {
+    errors.name = "name is required"
+  }
+  if (password.length < 4) {
+    errors.password = "password must be at least 4 characters long"
+  }
+  if (password !== passwordConfirm) {
+    errors.passwordConfirm = "passwords do not match"
   }
 
-  const existing = await db.query.users.findFirst({
-    where: eq(users.username, username.trim()),
-  })
-  if (existing) {
-    redirect("/register?error=taken")
+  if (!errors.username) {
+    const existing = await db.query.users.findFirst({
+      where: eq(users.username, username),
+    })
+    if (existing) {
+      errors.username = "username is already taken"
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors, values: { username, name } }
   }
 
   const passwordHash = await bcrypt.hash(password, 10)
-  await db.insert(users).values({
-    username: username.trim(),
-    name: name.trim(),
-    passwordHash,
-  })
+  await db.insert(users).values({ username, name, passwordHash })
 
   redirect("/login")
 }
