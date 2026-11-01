@@ -25,5 +25,17 @@ export const getUserByToken = async (token: string) => {
       username: true,
       name: true,
     },
+    with: {
+      blogs: {
+        columns: {
+          id: true,
+          title: true,
+          author: true,
+          url: true,
+          likes: true,
+        }, 
+        orderBy: [desc(blogs.likes)],
+      },
+    },
   })
 }
