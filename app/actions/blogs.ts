@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { addBlog, incrementLikes } from "@/app/services/blogs"
-import { auth } from "@/auth"
+import { getCurrentUser } from "@/app/services/session"
 
 type BlogFormState = {
   errors: { title?: string; author?: string; url?: string }
@@ -15,8 +15,8 @@ export const createBlog = async (
   prevState: BlogFormState,
   formData: FormData,
 ): Promise<BlogFormState> => {
-  const session = await auth()
-  if (!session) {
+  const user = await getCurrentUser()
+  if (!user) {
     redirect("/login")
   }
 
@@ -39,7 +39,7 @@ export const createBlog = async (
     return { errors, values, success: false }
   }
 
-  await addBlog(values.title, values.author, values.url)
+  await addBlog(values.title, values.author, values.url, user.id)
 
   revalidatePath("/blogs")
   return { errors: {}, values, success: true }
