@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import FormField from "@/app/components/FormField"
+import Button from "@/app/components/Button"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -27,23 +29,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Username
-            <input type="text" name="username" required />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password
-            <input type="password" name="password" required />
-          </label>
-        </div>
-        <button type="submit">Login</button>
+    <div className="max-w-sm mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      {error && (
+        <p className="border border-red-500 text-red-600 text-sm rounded px-3 py-2 mb-4">
+          {error}
+        </p>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField label="Username" type="text" name="username" required />
+        <FormField label="Password" type="password" name="password" required />
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
       </form>
     </div>
   )

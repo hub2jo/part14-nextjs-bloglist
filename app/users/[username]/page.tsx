@@ -1,6 +1,6 @@
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getUserWithBlogs } from "../../services/users"
+import { getUserWithBlogs } from "@/app/services/users"
+import BlogItem from "@/app/components/BlogItem"
 
 const UserPage = async ({
   params,
@@ -15,17 +15,16 @@ const UserPage = async ({
   }
 
   return (
-    <div>
-      <h2>{user.name}</h2>
-      <h3>Added blogs</h3>
+    <div className="max-w-2xl mx-auto p-6">
+      <h2 className="text-2xl font-bold">{user.name}</h2>
+      <p className="text-gray-500 mb-6">@{user.username}</p>
+      <h3 className="text-lg font-semibold mb-2">Added blogs</h3>
       {user.blogs.length === 0 ? (
-        <p>no blogs added yet</p>
+        <p className="text-gray-500">no blogs added yet</p>
       ) : (
-        <ul>
+        <ul className="space-y-2">
           {user.blogs.map((blog) => (
-            <li key={blog.id}>
-              <Link href={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}, {blog.likes} likes
-            </li>
+            <BlogItem key={blog.id} blog={blog} />
           ))}
         </ul>
       )}

@@ -2,12 +2,13 @@
 
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import { addBlog, incrementLikes } from "../services/blogs"
+import { addBlog, incrementLikes } from "@/app/services/blogs"
 import { auth } from "@/auth"
 
 type BlogFormState = {
   errors: { title?: string; author?: string; url?: string }
   values: { title: string; author: string; url: string }
+  success: boolean
 }
 
 export const createBlog = async (
@@ -35,13 +36,13 @@ export const createBlog = async (
   }
 
   if (Object.keys(errors).length > 0) {
-    return { errors, values }
+    return { errors, values, success: false }
   }
 
   await addBlog(values.title, values.author, values.url)
 
   revalidatePath("/blogs")
-  redirect("/blogs")
+  return { errors: {}, values, success: true }
 }
 
 export const likeBlog = async (formData: FormData) => {
