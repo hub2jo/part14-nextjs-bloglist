@@ -1,0 +1,9 @@
+@token = paste-your-token-here
+
+### valid token
+GET http://localhost:3000/api/me
+Authorization: Bearer 52ff43b2-5306-477d-abb8-78a8c337d54c
+
+### invalid token
+GET http://localhost:3000/api/me
+Authorization: Bearer wrong
