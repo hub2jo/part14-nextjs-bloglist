@@ -21,13 +21,14 @@ const Blogs = async ({
       <Form action="/blogs" className="flex items-center gap-2 mb-6">
         <input
           key={filter ?? ""}
+          data-testid="filter-input"
           type="text"
           name="filter"
           defaultValue={filter ?? ""}
           placeholder="search by title"
           className="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <Button type="submit">search</Button>
+        <Button type="submit" data-testid="search-button">search</Button>
         {term && (
           <Link href="/blogs" className="text-blue-600 hover:underline">
             clear
@@ -39,7 +40,7 @@ const Blogs = async ({
         <p className="text-gray-500">no blogs match &quot;{filter}&quot;</p>
       )}
 
-      <ul className="space-y-2">
+      <ul className="space-y-2" data-testid="blogs-list">
         {blogs.map((blog) => (
           <BlogItem key={blog.id} blog={blog} />
         ))}

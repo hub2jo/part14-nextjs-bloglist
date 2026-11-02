@@ -50,7 +50,7 @@ const NewBlog = () => {
           defaultValue={state.values.url}
           error={state.errors.url}
         />
-        <Button type="submit" disabled={pending || state.success} className="w-full">
+        <Button type="submit" disabled={pending || state.success} className="w-full" data-testid="create-blog-button">
           Create
         </Button>
       </form>

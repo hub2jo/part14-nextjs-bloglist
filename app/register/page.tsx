@@ -39,12 +39,12 @@ export default function RegisterPage() {
           error={state.errors.password}
         />
         <FormField
-          label="Confirm password"
+          label="Confirm Password"
           type="password"
           name="passwordConfirm"
           error={state.errors.passwordConfirm}
         />
-        <Button type="submit" disabled={pending} className="w-full">
+        <Button type="submit" disabled={pending} className="w-full" data-testid="register-button">
           Register
         </Button>
       </form>

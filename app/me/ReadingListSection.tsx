@@ -9,16 +9,20 @@ interface ReadingListSectionProps {
   title: string
   entries: ReadingListEntry[]
   emptyText: string
+  testId: string
+  emptyTestId: string
 }
 
-const ReadingListSection = ({ title, entries, emptyText }: ReadingListSectionProps) => {
+const ReadingListSection = ({ 
+  title, entries, emptyText, testId, emptyTestId,
+}: ReadingListSectionProps) => {
   return (
-    <section className="space-y-2">
+    <section className="space-y-2" data-testid={testId}>
       <h4 className="font-semibold">
         {title} <span className="text-gray-500 font-normal">({entries.length})</span>
       </h4>
       {entries.length === 0 ? (
-        <p className="text-sm text-gray-500">{emptyText}</p>
+        <p className="text-sm text-gray-500" data-testid={emptyTestId}>{emptyText}</p>
       ) : (
         <ul className="space-y-2">
           {entries.map((entry) => (
@@ -42,7 +46,7 @@ const ReadingListSection = ({ title, entries, emptyText }: ReadingListSectionPro
               {!entry.read && (
                 <form action={markBlogAsRead}>
                   <input type="hidden" name="entryId" value={entry.id} />
-                  <Button type="submit" className="text-sm whitespace-nowrap">
+                  <Button type="submit" className="text-sm whitespace-nowrap" data-testid={`mark-read-${entry.id}`}>
                     mark as read
                   </Button>
                 </form>

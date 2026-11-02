@@ -20,9 +20,9 @@ const BlogPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <div className="border rounded p-6 space-y-3">
-        <h2 className="text-2xl font-bold">{blog.title}</h2>
-        <p className="text-gray-500">by {blog.author}</p>
+      <div className="border rounded p-6 space-y-3" data-testid="blog-detail">
+        <h2 className="text-2xl font-bold" data-testid="blog-title">{blog.title}</h2>
+        <p className="text-gray-500" data-testid="blog-author">by {blog.author}</p>
         <a
           href={blog.url}
           target="_blank"
@@ -46,7 +46,9 @@ const BlogPage = async ({ params }: { params: Promise<{ id: string }> }) => {
             ) : (
               <form action={addBlogToReadingList}>
                 <input type="hidden" name="blogId" value={blog.id} />
-                <Button type="submit">add to reading list</Button>
+                <Button type="submit" data-testid="add-to-reading-list-button">
+                  add to reading list
+                </Button>
               </form>
             )}
           </div>
