@@ -6,8 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:migrate:prod": "MIGRATE_PROD=true drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:studio:prod": "MIGRATE_PROD=true drizzle-kit studio"
   },
+
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",

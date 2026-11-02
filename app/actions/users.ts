@@ -1,12 +1,13 @@
 "use server"
 
 import { redirect } from "next/navigation"
-import { eq } from "drizzle-orm"
-import bcrypt from "bcryptjs"
-import { db } from "@/db"
-import { users } from "@/db/schema"
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "@/app/services/session"
+import {
+  createUser,
+  getUserByUsername,
+  regenerateToken,
+} from "@/app/services/users"
 
 type RegisterFormState = {
   errors: {
@@ -42,21 +43,15 @@ export const registerUser = async (
     errors.passwordConfirm = "passwords do not match"
   }
 
-  if (!errors.username) {
-    const existing = await db.query.users.findFirst({
-      where: eq(users.username, username),
-    })
-    if (existing) {
-      errors.username = "username is already taken"
-    }
+  if (!errors.username && (await getUserByUsername(username))) {
+    errors.username = "username is already taken"
   }
 
   if (Object.keys(errors).length > 0) {
     return { errors, values: { username, name } }
   }
 
-  const passwordHash = await bcrypt.hash(password, 10)
-  await db.insert(users).values({ username, name, passwordHash })
+  await createUser(username, name, password)
 
   redirect("/login")
 }
@@ -67,10 +62,7 @@ export const generateToken = async () => {
     redirect("/login")
   }
 
-  await db
-    .update(users)
-    .set({ token: crypto.randomUUID() })
-    .where(eq(users.id, user.id))
+  await regenerateToken(user.id)
 
   revalidatePath("/me")
 }
